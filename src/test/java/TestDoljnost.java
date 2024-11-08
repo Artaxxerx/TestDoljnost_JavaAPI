@@ -11,13 +11,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 
 public class TestDoljnost {
 
-    public static String idValue;
+    public String idValue;
+    public String getIdValued;
 
     @Test
     public void createSotrudnik(){
@@ -57,6 +57,7 @@ public class TestDoljnost {
 
     }
 
+
     @Test
     public void findlByCriteria(){
         List<Map<String, String>> criterionBody = new ArrayList<>();
@@ -86,6 +87,9 @@ public class TestDoljnost {
                 .post();
         response.then().statusCode(200)
                 .body("returnCode", equalTo("EA.200"));
+        getIdValued = response.then().contentType(ContentType.JSON).extract().path("attributes[2].value");
+        Assertions.assertEquals(idValue, getIdValued, "Id созданного сотрудника равен id найденного сотрдника");
+        response.then().assertThat().body("attributes[5].value", is("false"));
 
     }
 }

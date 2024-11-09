@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 
@@ -44,7 +45,7 @@ public class TestDoljnost {
             jsonBody.put("attributes1", attributes);
 
 
-            Response response = RestAssured.given()
+            Response response = given()
                     .baseUri(BASE_URL)
                     .basePath(ENDPOINT)
                     .contentType("application/json")
@@ -78,7 +79,7 @@ public class TestDoljnost {
         jsonFindBody.put("find_criterion", criterionBody);
 
 
-        Response response = RestAssured.given()
+        Response response = given()
                 .baseUri(BASE_URL)
                 .basePath(ENDPOINT)
                 .contentType("application/json")
@@ -87,9 +88,28 @@ public class TestDoljnost {
                 .post();
         response.then().statusCode(200)
                 .body("returnCode", equalTo("EA.200"));
+        response.then().assertThat().body("attributes[5].value", is("false"));
         getIdValued = response.then().contentType(ContentType.JSON).extract().path("attributes[2].value");
         Assertions.assertEquals(idValue, getIdValued, "Id созданного сотрудника равен id найденного сотрдника");
-        response.then().assertThat().body("attributes[5].value", is("false"));
+    }
+
+    @Test
+    public void deleteSotrudnik(){
+        Map<String, String> deleteSotrudnik = new HashMap<>();
+        deleteSotrudnik.put("Filial_ID", "Test_1");
+        deleteSotrudnik.put("object_id", idValue);
+
+        Response response = given()
+                .baseUri(BASE_URL)
+                .basePath(ENDPOINT)
+                .contentType("application/json")
+                .body(deleteSotrudnik)
+                .when()
+                .post();
+        response.then().assertThat().body("returnCode", equalTo("EA.201"));
+        response.then().assertThat().body("attributes1[0].is_deleted", equalTo("true"));
+        response.then().assertThat().body("returnMessage", equalTo("Запись успешно удалена"));
+
 
     }
 }

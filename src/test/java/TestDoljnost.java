@@ -109,7 +109,5 @@ public class TestDoljnost {
         response.then().assertThat().body("returnCode", equalTo("EA.201"));
         response.then().assertThat().body("attributes1[0].is_deleted", equalTo("true"));
         response.then().assertThat().body("returnMessage", equalTo("Запись успешно удалена"));
-
-
     }
 }

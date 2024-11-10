@@ -1,7 +1,4 @@
-
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,46 +18,46 @@ public class TestDoljnost {
     public String getIdValued;
 
     @Test
-    public void createSotrudnik(){    //Создание сотрудника
+    public void createSotrudnik() {    //Создание сотрудника
 
-            List<Map<String, String>> attributes = new ArrayList<>();
+        List<Map<String, String>> attributes = new ArrayList<>();
 
-            Map<String, String> attribute1 = new HashMap<>();
-            attribute1.put("key", "FIO");
-            attribute1.put("value", "Иванов Иван Иванович");
-            attributes.add(attribute1);
+        Map<String, String> attribute1 = new HashMap<>();
+        attribute1.put("key", "FIO");
+        attribute1.put("value", "Иванов Иван Иванович");
+        attributes.add(attribute1);
 
-            Map<String, String> attribute2 = new HashMap<>();
-            attribute2.put("key", "appointment");
-            attribute2.put("value", "Менеджер на телефоне");
-            attributes.add(attribute2);
+        Map<String, String> attribute2 = new HashMap<>();
+        attribute2.put("key", "appointment");
+        attribute2.put("value", "Менеджер на телефоне");
+        attributes.add(attribute2);
 
-            Map<String, String> attribute3 = new HashMap<>();
-            attribute3.put("key", "Filial_name");
-            attribute3.put("value", "Рога и копыта");
-            attributes.add(attribute3);
+        Map<String, String> attribute3 = new HashMap<>();
+        attribute3.put("key", "Filial_name");
+        attribute3.put("value", "Рога и копыта");
+        attributes.add(attribute3);
 
-            Map<String, Object> jsonBody = new HashMap<>();
-            jsonBody.put("Filial_ID", "Test_1");
-            jsonBody.put("attributes1", attributes);
+        Map<String, Object> jsonBody = new HashMap<>();
+        jsonBody.put("Filial_ID", "Test_1");
+        jsonBody.put("attributes1", attributes);
 
 
-            Response response = given()
-                    .baseUri(BASE_URL)
-                    .basePath(ENDPOINT)
-                    .contentType("application/json")
-                    .body(jsonBody)
-                    .when()
-                    .post();
-                    response.then().assertThat().body("returnCode", equalTo("EA.200"))    //Проверка, что в ответе есть EA.200
-                            .assertThat().body("attributes1[2].value", notNullValue());           //Проверка, что в ответе есть должность созданного сотрудника
-         idValue = response.then().contentType(ContentType.JSON).extract().path("attributes1[1].value");        //Сохранения ID сотрудника для последующего использования
+        Response response = given()
+                .baseUri(BASE_URL)
+                .basePath(ENDPOINT)
+                .contentType("application/json")
+                .body(jsonBody)
+                .when()
+                .post();
+        response.then().assertThat().body("returnCode", equalTo("EA.200"))    //Проверка, что в ответе есть EA.200
+                .assertThat().body("attributes1[2].value", notNullValue());           //Проверка, что в ответе есть должность созданного сотрудника
+        idValue = response.then().contentType(ContentType.JSON).extract().path("attributes1[1].value");        //Сохранения ID сотрудника для последующего использования
 
     }
 
 
     @Test
-    public void findlByCriteria(){       //Поиск созданного сотрудника
+    public void findlByCriteria() {       //Поиск созданного сотрудника
         List<Map<String, String>> criterionBody = new ArrayList<>();
 
         Map<String, String> findCriterion1 = new HashMap<>();
@@ -94,7 +91,7 @@ public class TestDoljnost {
     }
 
     @Test
-    public void deleteSotrudnik(){   //Удаление сотрудника
+    public void deleteSotrudnik() {   //Удаление сотрудника
         Map<String, String> deleteSotrudnik = new HashMap<>();
         deleteSotrudnik.put("Filial_ID", "Test_1");
         deleteSotrudnik.put("object_id", idValue);

@@ -21,7 +21,7 @@ public class TestDoljnost {
     public String getIdValued;
 
     @Test
-    public void createSotrudnik(){
+    public void createSotrudnik(){    //Создание сотрудника
 
             List<Map<String, String>> attributes = new ArrayList<>();
 
@@ -52,15 +52,15 @@ public class TestDoljnost {
                     .body(jsonBody)
                     .when()
                     .post();
-                    response.then().assertThat().body("returnCode", equalTo("EA.200"))
-                            .assertThat().body("attributes1[2].value", notNullValue());
-         idValue = response.then().contentType(ContentType.JSON).extract().path("attributes1[1].value");
+                    response.then().assertThat().body("returnCode", equalTo("EA.200"))    //Проверка, что в ответе есть EA.200
+                            .assertThat().body("attributes1[2].value", notNullValue());           //Проверка, что в ответе есть должность созданного сотрудника
+         idValue = response.then().contentType(ContentType.JSON).extract().path("attributes1[1].value");        //Сохранения ID сотрудника для последующего использования
 
     }
 
 
     @Test
-    public void findlByCriteria(){
+    public void findlByCriteria(){       //Поиск созданного сотрудника
         List<Map<String, String>> criterionBody = new ArrayList<>();
 
         Map<String, String> findCriterion1 = new HashMap<>();
@@ -86,15 +86,15 @@ public class TestDoljnost {
                 .body(jsonFindBody)
                 .when()
                 .post();
-        response.then().statusCode(200)
-                .body("returnCode", equalTo("EA.200"));
-        response.then().assertThat().body("attributes[5].value", is("false"));
+        response.then().statusCode(200)     //Проверка на статус код ответа
+                .body("returnCode", equalTo("EA.200"));     //В ответе метода EA.200
+        response.then().assertThat().body("attributes[5].value", is("false"));  //Проверка, что у искомой записи созданного сотрудника признак удален = false
         getIdValued = response.then().contentType(ContentType.JSON).extract().path("attributes[2].value");
-        Assertions.assertEquals(idValue, getIdValued, "Id созданного сотрудника равен id найденного сотрдника");
+        Assertions.assertEquals(idValue, getIdValued, "Id созданного сотрудника равен id найденного сотрдника");  //Проверка, что id искомого сотрудника = id созданного сотрудника
     }
 
     @Test
-    public void deleteSotrudnik(){
+    public void deleteSotrudnik(){   //Удаление сотрудника
         Map<String, String> deleteSotrudnik = new HashMap<>();
         deleteSotrudnik.put("Filial_ID", "Test_1");
         deleteSotrudnik.put("object_id", idValue);
@@ -106,8 +106,8 @@ public class TestDoljnost {
                 .body(deleteSotrudnik)
                 .when()
                 .post();
-        response.then().assertThat().body("returnCode", equalTo("EA.201"));
-        response.then().assertThat().body("attributes1[0].is_deleted", equalTo("true"));
-        response.then().assertThat().body("returnMessage", equalTo("Запись успешно удалена"));
+        response.then().assertThat().body("returnCode", equalTo("EA.201"));   //Проверка, что код ответа EA.201
+        response.then().assertThat().body("attributes1[0].is_deleted", equalTo("true"));   //Проверка, что для удаляемого объекта признак is_deleted = true в ответе
+        response.then().assertThat().body("returnMessage", equalTo("Запись успешно удалена"));  //Сообщение содержит: "Запись успешно удалена"
     }
 }
